@@ -15,7 +15,7 @@ export default function Home() {
       case 2:
         return <StepTwo onNext={() => setCurrentStep(3)} onBack={() => setCurrentStep(1)} />;
       case 3:
-        return <StepThree onBack={() => setCurrentStep(2)} />;
+        return <StepThree />;
       default:
         return <StepOne onNext={() => setCurrentStep(2)} />;
     }

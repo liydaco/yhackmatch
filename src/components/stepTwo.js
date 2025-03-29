@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 
-export default function StepTwo({ onNext }) {
+export default function StepTwo() {
   const [currentMessage, setCurrentMessage] = useState(0);
   const messages = [
     "waiting for other users",
