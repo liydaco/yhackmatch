@@ -5,8 +5,8 @@ export default function StepThreeHost({ onNext }) {
   const topMatches = [
     { 
       rank: 1, 
-      host: { name: "`Sidi", specialty: "Mint Choc Smoothies" },
-      guest: { name: "Luc", preferences: "Mint Choc Chip Icecream" },
+      host: { name: "Siddhi", specialty: "Mint Choc Smoothies" },
+      guest: { name: "JJ", preferences: "Mint Choc Chip Icecream" },
       score: 95 
     },
     { 
@@ -17,7 +17,7 @@ export default function StepThreeHost({ onNext }) {
     },
     { 
       rank: 3, 
-      host: { name: "Moody", specialty: "Tiramisu" },
+      host: { name: "James", specialty: "Tiramisu" },
       guest: { name: "Mike Chen", preferences: "Chocolate Cake" },
       score: 82 
     },
