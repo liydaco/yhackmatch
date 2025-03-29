@@ -1,12 +1,11 @@
-import { PrismaClient } from "@prisma/client";
+import { saveDishEmbeddings } from "./pinecone";
+import prisma from "./prisma";
 
-const prisma = new PrismaClient();
-
-export async function createUser({ name, linkedIn, dish, sessionId }) {
+export async function createUser({ name, linkedin, dish, sessionId }) {
 	return await prisma.user.create({
 		data: {
 			name,
-			linkedIn,
+			linkedin,
 			dish,
 			sessionId,
 		},
@@ -40,6 +39,27 @@ export const createMatch = async (user1Id, user2Id, similarityScore) => {
 	});
 };
 
+export const saveUser = async (
+	name,
+	dish,
+	linkedin,
+	embedding,
+	sessionId
+) => {
+	try {
+		// Create new user in Prisma
+		const newUser = await createUser(name, linkedin, dish, embedding, sessionId);
+
+		// Save to Pinecone using reusable method
+		await saveDishEmbeddings(newUser, embedding, sessionId);
+
+		return newUser;
+	} catch (error) {
+		console.error("Error in saveUser:", error);
+		throw error;
+	}
+};
+
 export async function getUser(id) {
 	return await prisma.user.findUnique({
 		where: { id },
@@ -58,9 +78,9 @@ export async function getUsers(sessionId) {
     where: {
       sessionId: sessionId,
     },
-    orderBy: {
-      timestamp: 'desc',
-    },
+    // orderBy: {
+    //   timestamp: 'desc',
+    // },
     include: {
       user1Matches: {
         include: {
@@ -68,7 +88,7 @@ export async function getUsers(sessionId) {
             select: {
               name: true,
               dish: true,
-              linkedIn: true,
+              linkedin: true,
             },
           },
         },
@@ -79,7 +99,7 @@ export async function getUsers(sessionId) {
             select: {
               name: true,
               dish: true,
-              linkedIn: true,
+              linkedin: true,
             },
           },
         },
@@ -96,11 +116,11 @@ export async function getUsers(sessionId) {
       id: user.id,
       name: user.name,
       dish: user.dish,
-      linkedIn: user.linkedIn,
+      linkedin: user.linkedin,
       matchedUser: matchedUser ? {
         name: matchedUser.name,
         dish: matchedUser.dish,
-        linkedIn: matchedUser.linkedIn,
+        linkedin: matchedUser.linkedin,
         similarity: matchAsUser1?.similarityScore || matchAsUser2?.similarityScore,
       } : null,
     };
