@@ -1,0 +1,42 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id            String       @id @default(uuid())
+  name          String
+  linkedin      String?
+  dish          String
+  sessionId     String
+  matchRecordId String?
+  
+  user1Matches  MatchRecord[] @relation("user1")
+  user2Matches  MatchRecord[] @relation("user2")
+
+  @@index([id])
+  @@index([matchRecordId])
+}
+
+model MatchRecord {
+  id             String   @id @default(uuid())
+  similarityScore Float
+  menu           String   // Menu or dish combination for the match
+  createdAt      DateTime @default(now())
+  
+  user1Id        String
+  user2Id        String
+  user1          User   @relation("user1", fields: [user1Id], references: [id])
+  user2          User    @relation("user2", fields: [user2Id], references: [id])
+
+  @@index([id])
+  @@index([user1Id])
+  @@index([user2Id])
+} 
