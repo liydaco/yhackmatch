@@ -1,59 +1,95 @@
 "use client";
 
-export default function Home() {
-  return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 p-4">
-      <main className="w-full max-w-md">
-        {/* Header Section */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-800 dark:text-white mb-2">
-            Welcome
-          </h1>
-          <p className="text-gray-600 dark:text-gray-300">
-            Enter your details below to get started
-          </p>
-        </div>
+import { useState } from "react";
+import { generateMenu } from "@/utils/openai";
 
-        {/* Form Section */}
-        <form className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 space-y-4">
-          <div className="space-y-2">
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium text-gray-700 dark:text-gray-200"
-            >
-              Email
+export default function Home() {
+  const [dish1, setDish1] = useState("Grilled sea bass with Mediterranean herbs");
+  const [dish2, setDish2] = useState("Dark chocolate soufflé with vanilla bean ice cream");
+  const [menu, setMenu] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const handleGenerateMenu = async () => {
+    setLoading(true);
+    setError(null);
+    setMenu(null);
+
+    try {
+      const result = await generateMenu(dish1, dish2);
+      setMenu(result);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white dark:from-gray-900 dark:to-gray-800 p-8">
+      <div className="max-w-4xl mx-auto">
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-8">
+          Menu Generator Test
+        </h1>
+
+        <div className="space-y-6">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
+              First Dish
             </label>
             <input
-              type="email"
-              id="email"
-              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-              placeholder="Enter your email"
+              type="text"
+              value={dish1}
+              onChange={(e) => setDish1(e.target.value)}
+              className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-white"
             />
           </div>
 
-          <div className="space-y-2">
-            <label
-              htmlFor="message"
-              className="block text-sm font-medium text-gray-700 dark:text-gray-200"
-            >
-              Message
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
+              Second Dish
             </label>
-            <textarea
-              id="message"
-              rows="4"
-              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-              placeholder="Your message here..."
-            ></textarea>
+            <input
+              type="text"
+              value={dish2}
+              onChange={(e) => setDish2(e.target.value)}
+              className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+            />
           </div>
 
           <button
-            type="submit"
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200"
+            onClick={handleGenerateMenu}
+            disabled={loading || !dish1.trim() || !dish2.trim()}
+            className={`w-full px-4 py-2 rounded-lg text-white font-medium ${
+              loading || !dish1.trim() || !dish2.trim()
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-blue-600 hover:bg-blue-700"
+            }`}
           >
-            Submit
+            {loading ? "Generating Menu..." : "Generate Menu"}
           </button>
-        </form>
-      </main>
+        </div>
+
+        {error && (
+          <div className="mt-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
+            <p className="font-medium">Error:</p>
+            <p>{error}</p>
+          </div>
+        )}
+
+        {menu && (
+          <div className="mt-6">
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+              Generated Menu:
+            </h2>
+            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
+              <pre className="whitespace-pre-wrap font-serif text-gray-800 dark:text-gray-200">
+                {menu}
+              </pre>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
