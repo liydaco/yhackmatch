@@ -54,12 +54,57 @@ export async function getUser(id) {
 }
 
 export async function getUsers(sessionId) {
-	return await prisma.user.findMany({
-		where: { sessionId },
-		include: {
-			matches: true,
-		},
-	});
+  const users = await prisma.user.findMany({
+    where: {
+      sessionId: sessionId,
+    },
+    orderBy: {
+      timestamp: 'desc',
+    },
+    include: {
+      user1Matches: {
+        include: {
+          user2: {
+            select: {
+              name: true,
+              dish: true,
+              linkedIn: true,
+            },
+          },
+        },
+      },
+      user2Matches: {
+        include: {
+          user1: {
+            select: {
+              name: true,
+              dish: true,
+              linkedIn: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  const transformedUsers = users.map(user => {
+    const matchAsUser1 = user.user1Matches[0];
+    const matchAsUser2 = user.user2Matches[0];
+    const matchedUser = matchAsUser1?.user2 || matchAsUser2?.user1;
+
+    return {
+      id: user.id,
+      name: user.name,
+      dish: user.dish,
+      linkedIn: user.linkedIn,
+      matchedUser: matchedUser ? {
+        name: matchedUser.name,
+        dish: matchedUser.dish,
+        linkedIn: matchedUser.linkedIn,
+        similarity: matchAsUser1?.similarityScore || matchAsUser2?.similarityScore,
+      } : null,
+    };
+  });
 }
 
 export async function getUnmatchedUsers(sessionId) {
