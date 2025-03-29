@@ -125,6 +125,8 @@ export async function getUsers(sessionId) {
       } : null,
     };
   });
+
+  return transformedUsers;
 }
 
 export async function getUnmatchedUsers(sessionId) {

@@ -21,7 +21,7 @@ export const findMatch = async (user, sessionId) => {
 					match: {
 						name: matchData.name,
 						dish: matchData.dish,
-						linkedIn: matchData.linkedIn,
+						linkedin: matchData.linkedin,
 						similarity: user.similarityScore,
 					},
 				};
