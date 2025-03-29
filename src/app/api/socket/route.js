@@ -10,7 +10,24 @@ export async function GET(request) {
     return new Response("Expected websocket", { status: 426 });
   }
 
-  const { socket, response } = await request.body;
+  // Get the WebSocket server instance from the request
+  const { socket, response } = Reflect.get(request, "socket")
+    ? { socket: Reflect.get(request, "socket"), response: new Response() }
+    : await new Promise((resolve) => {
+        const upgradeHeader = request.headers.get("upgrade");
+        if (upgradeHeader !== "websocket") {
+          resolve({
+            response: new Response("Expected websocket", { status: 426 }),
+          });
+          return;
+        }
+
+        const socketServer = new WebSocketServer({ noServer: true });
+
+        socketServer.handleUpgrade(request, socket, Buffer.alloc(0), (ws) => {
+          resolve({ socket: ws, response: new Response() });
+        });
+      });
 
   wss.handleUpgrade(request, socket, Buffer.alloc(0), async (ws) => {
     try {
