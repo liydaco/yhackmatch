@@ -5,21 +5,21 @@ export default function StepThreeHost({ onNext }) {
   const topMatches = [
     { 
       rank: 1, 
-      host: { name: "Chef Maria", specialty: "Italian Cuisine" },
-      guest: { name: "John Smith", preferences: "Italian Food Enthusiast" },
-      score: 98 
-    },
-    { 
-      rank: 2, 
-      host: { name: "Chef John", specialty: "French Cuisine" },
-      guest: { name: "Sarah Wilson", preferences: "French Dining Lover" },
+      host: { name: "`Sidi", specialty: "Mint Choc Smoothies" },
+      guest: { name: "Luc", preferences: "Mint Choc Chip Icecream" },
       score: 95 
     },
     { 
+      rank: 2, 
+      host: { name: "Rosie", specialty: "Caprese Salad" },
+      guest: { name: "Sarah", preferences: "Burrata and Tomatoes" },
+      score: 91 
+    },
+    { 
       rank: 3, 
-      host: { name: "Chef Sarah", specialty: "Asian Fusion" },
-      guest: { name: "Mike Chen", preferences: "Asian Cuisine Fan" },
-      score: 92 
+      host: { name: "Moody", specialty: "Tiramisu" },
+      guest: { name: "Mike Chen", preferences: "Chocolate Cake" },
+      score: 82 
     },
     // ... add more matches as needed
   ];
