@@ -28,4 +28,51 @@ export async function generateEmbeddings(text) {
     console.error('Error generating embeddings:', error);
     throw new Error('Failed to generate embeddings: ' + error.message);
   }
+}
+
+const MENU_GENERATION_PROMPT = `Create a detailed and elegant menu description for a fine dining experience based on the following two dishes. Include:
+1. A creative menu title
+2. Each dish's name styled elegantly
+3. Detailed description including:
+   - Key ingredients
+   - Cooking methods
+   - Flavor profile
+   - Plating description
+4. Suggested wine pairing for each dish
+5. Price in GBP (£)
+
+Format the response in a structured way that's easy to read.
+
+Dishes to include:`;
+
+/**
+ * Generates an elegant menu description from two dishes using GPT-4
+ * @param {string} dish1 - The first dish
+ * @param {string} dish2 - The second dish
+ * @returns {Promise<string>} A promise that resolves to the generated menu text
+ * @throws {Error} If the API call fails or returns invalid data
+ */
+export async function generateMenu(dish1, dish2) {
+  try {
+    const response = await openai.chat.completions.create({
+      model: "gpt-4",
+      messages: [
+        {
+          role: "system",
+          content: "You are an expert fine dining chef and sommelier crafting elegant menu descriptions."
+        },
+        {
+          role: "user",
+          content: `${MENU_GENERATION_PROMPT}\n1. ${dish1}\n2. ${dish2}`
+        }
+      ],
+      temperature: 0.7,
+      max_tokens: 1000,
+    });
+
+    return response.choices[0].message.content;
+  } catch (error) {
+    console.error('Error generating menu:', error);
+    throw new Error('Failed to generate menu: ' + error.message);
+  }
 } 
