@@ -55,7 +55,7 @@ Dishes to include:`;
 export async function generateMenu(dish1, dish2) {
   try {
     const response = await openai.chat.completions.create({
-      model: "gpt-4",
+      model: "gpt-4o",
       messages: [
         {
           role: "system",
@@ -67,7 +67,7 @@ export async function generateMenu(dish1, dish2) {
         }
       ],
       temperature: 0.7,
-      max_tokens: 1000,
+      // max_tokens: 1000,
     });
 
     return response.choices[0].message.content;
